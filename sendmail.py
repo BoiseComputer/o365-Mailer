@@ -1,4 +1,17 @@
 #! /usr/bin/python3
+import sys
+import subprocess
+import pkg_resources
+
+# Install missing requirements
+required = {'O365', 'datetime'}
+installed = {pkg.key for pkg in pkg_resources.working_set}
+missing = required - installed
+if missing:
+    python = sys.executable
+    subprocess.check_call([python, '-m', 'pip', 'install', *missing], stdout=subprocess.DEVNULL)
+
+from O365 import Account, FileSystemTokenBackend, Connection, MSGraphProtocol
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -6,9 +19,9 @@ from email.mime.base import MIMEBase
 from email import encoders
 from email.message import EmailMessage
 import argparse
-from O365 import Account, FileSystemTokenBackend, Connection, MSGraphProtocol
 import os.path, time
 from datetime import datetime, timedelta
+
 
 infer_fields=False
 
